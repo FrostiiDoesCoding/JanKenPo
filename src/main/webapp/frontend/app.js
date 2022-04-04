@@ -18,6 +18,7 @@ const windowHome = () => {
     const startBtn = document.querySelector(".start");
 
     const instructionsBtn = document.querySelector(".instructions")
+    const instructionsBtn2 = document.querySelector(".instructions2")
     const homeWindow = document.querySelector(".window-home");
     const startWindow = document.querySelector(".window-start");
     const instructionsWindow = document.querySelector(".window-instructions");
@@ -26,18 +27,36 @@ const windowHome = () => {
         homeWindow.classList.replace("fadeIn", "fadeOut");
         startWindow.classList.replace("fadeOut", "fadeIn");
     })
+    //Adds function to the instructions button on the home screen
     instructionsBtn.addEventListener("click", () => {
         console.log(instructionsBtn);
-        homeWindow.classList.replace("fadeIn", "fadeOut");
-        instructionsWindow.classList.replace("fadeOut", "fadeIn");
+        //homeWindow.classList.replace("fadeIn", "fadeOut");
+        instructionsWindow.style.zIndex = 1;
+        //instructionsWindow.classList.replace("fadeOut", "fadeIn");
         for (let i = 1; i < 7; i++) {
             const paragraph = `#paragraph-${i}`
             const current = document.getElementById(paragraph);
+            
             if (current.innerHTML === "paragraph-1") {
                 current.style.opacity = 1;
             } else
                 current.style.opacity = 0;
-
+        }
+    });
+    //Adds function to the instructions button on the game screen
+    instructionsBtn2.addEventListener("click", () => {
+        console.log(instructionsBtn);
+        //homeWindow.classList.replace("fadeIn", "fadeOut");
+        instructionsWindow.style.zIndex = 1;
+        //instructionsWindow.classList.replace("fadeOut", "fadeIn");
+        for (let i = 1; i < 7; i++) {
+            const paragraph = `#paragraph-${i}`
+            const current = document.getElementById(paragraph);
+            
+            if (current.innerHTML === "paragraph-1") {
+                current.style.opacity = 1;
+            } else
+                current.style.opacity = 0;
         }
     })
 }
@@ -53,9 +72,14 @@ const windowInstructions = () => {
     previousBtn.addEventListener("click", () => {
         console.log(previousBtn)
         switch (current.innerHTML) {
-            case "paragraph-6":
+            case "paragraph-7":
                 nextBtn.style.opacity = 1;
                 nextBtn.style.pointerEvents = "all";
+                current.innerHTML = "paragraph-6"
+                document.querySelector("#paragraph-7").classList.replace("fadeIn", "fadeOut");
+                document.querySelector("#paragraph-6").classList.replace("fadeOut", "fadeIn");
+                break;
+            case "paragraph-6":
                 current.innerHTML = "paragraph-5"
                 document.querySelector("#paragraph-6").classList.replace("fadeIn", "fadeOut");
                 document.querySelector("#paragraph-5").classList.replace("fadeOut", "fadeIn");
@@ -110,11 +134,16 @@ const windowInstructions = () => {
                 document.querySelector("#paragraph-5").classList.replace("fadeOut", "fadeIn");
                 break;
             case "paragraph-5":
-                nextBtn.style.opacity = 0;
-                nextBtn.style.pointerEvents = "none";
                 current.innerHTML = "paragraph-6"
                 document.querySelector("#paragraph-5").classList.replace("fadeIn", "fadeOut");
                 document.querySelector("#paragraph-6").classList.replace("fadeOut", "fadeIn");
+                break;
+             case "paragraph-6":
+                nextBtn.style.opacity = 0;
+                nextBtn.style.pointerEvents = "none";
+                current.innerHTML = "paragraph-7"
+                document.querySelector("#paragraph-6").classList.replace("fadeIn", "fadeOut");
+                document.querySelector("#paragraph-7").classList.replace("fadeOut", "fadeIn");
                 break;
         }
     })
@@ -133,36 +162,40 @@ const windowInstructions = () => {
         document.querySelector("#paragraph-5").classList.add("fadeOut");
         document.querySelector("#paragraph-6").classList.remove("fadeIn");
         document.querySelector("#paragraph-6").classList.add("fadeOut");
-        document.querySelector(".window-instructions").classList.replace("fadeIn", "fadeOut");
-        document.querySelector(".window-home").classList.replace("fadeOut", "fadeIn");
+        document.querySelector(".window-instructions").style.zIndex = -1;
+        //document.querySelector(".window-instructions").classList.replace("fadeIn", "fadeOut");
+        //document.querySelector(".window-home").classList.replace("fadeOut", "fadeIn");
     })
 }
 
 //Defines what the start screen can do
 const windowStart = () => {
-    console.log("windowStart");
+    console.log("windowStart"); 
     const inputName = document.querySelector("#name");
     const enterBtn = document.querySelector(".enter");
+    const regex = /[a-zA-Z]/;
     enterBtn.addEventListener("click", () => {
-        console.log(enterBtn)
         if (inputName.value === "") {
             alert("Please enter your name.")
-        } else {
-            playerName = inputName.value;
-            document.querySelector(".window-start").classList.replace("fadeIn", "fadeOut");
-            document.querySelector(".window-home").classList.replace("fadeOut", "fadeIn");
-            document.querySelector(".window").classList.replace("fadeIn", "fadeOut");
-            document.querySelector(".game").classList.replace("fadeOut", "fadeIn");
-            setUpGame(50, 10, 5);
-            startOfGame();
+            return;
+        } 
+        if (!(regex.test(inputName.value))) {
+            alert("A name must have at least one character.")
+            return;
         }
+        playerName = inputName.value;
+        document.querySelector(".window-start").classList.replace("fadeIn", "fadeOut");
+        document.querySelector(".window-home").classList.replace("fadeOut", "fadeIn");
+        document.querySelector(".window").classList.replace("fadeIn", "fadeOut");
+        document.querySelector(".game").classList.replace("fadeOut", "fadeIn");
+        setUpGame(50, 10, 5);
+        startOfGame();
     })
 }
 
 //Start the game
 const setUpGame = (setHP, setPower, setDef) => {
     console.log(setHP, setPower, setDef);
-    const pause = document.querySelector(".pause");
     player = new Player(playerName, setHP, setPower, setDef);
     playerMaxHP = player.hp;
     playerCurrentHP = playerMaxHP;
@@ -178,9 +211,9 @@ const setUpGame = (setHP, setPower, setDef) => {
 const startOfGame = () => {
     console.log("Hello")
     document.querySelector(".human-player h2").innerHTML = playerName;
-    document.querySelector(".human-player h3").innerHTML = `${playerCurrentHP}/${playerMaxHP}`;
+    document.querySelector(".human-player h3").innerHTML = `HP: ${playerCurrentHP}/${playerMaxHP}<br>Power: ${player.power}<br>Defense: ${player.def}`;
     document.querySelector(".computer-player h2").innerHTML = enemyName;
-    document.querySelector(".computer-player h3").innerHTML = `${enemyCurrentHP}/${enemyMaxHP}`;
+    document.querySelector(".computer-player h3").innerHTML = `HP: ${enemyCurrentHP}/${enemyMaxHP}<br>Power: ${enemy.power}<br>Defense: ${enemy.def}`;
     document.querySelectorAll("img").forEach(img => {
         img.addEventListener("click", () => {
             const previousAttack = document.querySelector(".previous-attack");
@@ -225,8 +258,8 @@ const displayResults = (winner, pAttack, eAttack) => {
             playerCurrentHP = 0;
         }
         resultsText.innerHTML = `${enemyName}\'s ${eAttack} beats ${playerName}\'s ${pAttack}<br>${enemyName} deals ${damage} damage to ${playerName}`;
-        document.querySelector(".human-player h3").innerHTML = `${playerCurrentHP}/${playerMaxHP}`;
-        document.querySelector(".computer-player h3").innerHTML = `${enemyCurrentHP}/${enemyMaxHP}`;
+        document.querySelector(".human-player h3").innerHTML = `HP: ${playerCurrentHP}/${playerMaxHP}<br>Power: ${player.power}<br>Defense: ${player.def}`;
+        document.querySelector(".computer-player h3").innerHTML = `HP: ${enemyCurrentHP}/${enemyMaxHP}<br>Power: ${enemy.power}<br>Defense: ${enemy.def}`;
     }
     if (winner === 0) {
         resultsText.innerHTML = `Both ${playerName} and ${enemyName} chose ${pAttack}<br>No damage is dealt`;
@@ -241,8 +274,8 @@ const displayResults = (winner, pAttack, eAttack) => {
         }
         console.log(resultsText)
         resultsText.innerHTML = `${playerName}\'s ${pAttack} beats ${enemyName}\'s ${eAttack}<br>${playerName} deals ${damage} damage to ${enemyName}`;
-        document.querySelector(".human-player h3").innerHTML = `${playerCurrentHP}/${playerMaxHP}`;
-        document.querySelector(".computer-player h3").innerHTML = `${enemyCurrentHP}/${enemyMaxHP}`;
+        document.querySelector(".human-player h3").innerHTML = `HP: ${playerCurrentHP}/${playerMaxHP}<br>Power: ${player.power}<br>Defense: ${player.def}`;
+        document.querySelector(".computer-player h3").innerHTML = `HP: ${enemyCurrentHP}/${enemyMaxHP}<br>Power: ${enemy.power}<br>Defense: ${enemy.def}`;
     }
     //Functiont to continue game if player and enemy are not dead
     if (playerCurrentHP > 0 && enemyCurrentHP > 0) {
@@ -268,7 +301,7 @@ const displayResults = (winner, pAttack, eAttack) => {
     if (playerCurrentHP > 0 && enemyCurrentHP === 0) {
         results.classList.replace("fadeIn", "fadeOut");
         count++;
-        resultsText.innerHTML = "Choose your Reward!<br>The stat you choose will increase by 5<br>(10 if you choose HP)"
+        resultsText.innerHTML = "You win!<br>Choose your Reward!"
         const levelUpScreen = document.querySelector(".level-up");
         attacks.classList.replace("fadeIn", "fadeOut");
         levelUpScreen.classList.replace("fadeOut", "fadeIn");
@@ -276,13 +309,18 @@ const displayResults = (winner, pAttack, eAttack) => {
     }
 }
 
+document.querySelector('.exit').addEventListener('click', () => {
+    window.location.reload();
+});
+
+
 document.querySelectorAll("button").forEach(button => {
     const levelUpScreen = document.querySelector(".level-up");
     const attacks = document.querySelector(".choose-attack");
     const results = document.querySelector(".results");
     const resultsText = document.querySelector(".info h2");
     button.addEventListener("click", () => {
-        if (button.className === "start" || button.className === "instructions" || button.className === "enter") {
+        if (button.className === "start" || button.className === "instructions" || button.className === "enter" || button.className === "pause") {
             return;
         }
         if (button.className === "ok") {
@@ -294,28 +332,26 @@ document.querySelectorAll("button").forEach(button => {
         if (button.className === "hp") {
             setUpGame((player.hp + 10), player.power, player.def);
             console.log(player, enemy)
-            document.querySelector(".human-player h3").innerHTML = `${playerCurrentHP}/${playerMaxHP}`;
+            document.querySelector(".human-player h3").innerHTML = `HP: ${playerCurrentHP}/${playerMaxHP}<br>Power: ${player.power}<br>Defense: ${player.def}`;
             document.querySelector(".computer-player h2").innerHTML = enemyName;
-            document.querySelector(".computer-player h3").innerHTML = `${enemyCurrentHP}/${enemyMaxHP}`;
+            document.querySelector(".computer-player h3").innerHTML = `HP: ${enemyCurrentHP}/${enemyMaxHP}<br>Power: ${enemy.power}<br>Defense: ${enemy.def}`;
 
         }
         if (button.className === "power") {
             setUpGame(player.hp, (player.power + 5), player.def);
             console.log(player, enemy)
-            document.querySelector(".human-player h3").innerHTML = `${playerCurrentHP}/${playerMaxHP}`;
+            document.querySelector(".human-player h3").innerHTML = `HP: ${playerCurrentHP}/${playerMaxHP}<br>Power: ${player.power}<br>Defense: ${player.def}`;
             document.querySelector(".computer-player h2").innerHTML = enemyName;
-            document.querySelector(".computer-player h3").innerHTML = `${enemyCurrentHP}/${enemyMaxHP}`;
+            document.querySelector(".computer-player h3").innerHTML = `HP: ${enemyCurrentHP}/${enemyMaxHP}<br>Power: ${enemy.power}<br>Defense: ${enemy.def}`;
 
         }
         if (button.className === "defense") {
             setUpGame(player.hp, player.power, (player.def + 5));
             console.log(player, enemy)
-            document.querySelector(".human-player h3").innerHTML = `${playerCurrentHP}/${playerMaxHP}`;
+            document.querySelector(".human-player h3").innerHTML = `HP: ${playerCurrentHP}/${playerMaxHP}<br>Power: ${player.power}<br>Defense: ${player.def}`;
             document.querySelector(".computer-player h2").innerHTML = enemyName;
-            document.querySelector(".computer-player h3").innerHTML = `${enemyCurrentHP}/${enemyMaxHP}`;
-
+            document.querySelector(".computer-player h3").innerHTML = `HP: ${enemyCurrentHP}/${enemyMaxHP}<br>Power: ${enemy.power}<br>Defense: ${enemy.def}`;
         }
-        console.log(button);
         levelUpScreen.classList.replace("fadeIn", "fadeOut");
         attacks.classList.replace("fadeOut", "fadeIn");
         resultsText.innerHTML = "Choose your attack";
@@ -327,6 +363,3 @@ document.querySelectorAll("button").forEach(button => {
 windowHome();
 windowInstructions();
 windowStart();
-
-
-//Temp delete later
